@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,9 +38,9 @@ class UsersControllers extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-	    $post = User::create($request->only('name', 'email')+['password'=>bcrypt($request->password)]);
+	    $post = User::create($request->only('name', 'email', '_token')+['password'=>bcrypt($request->password)]);
 	    return redirect()->route('post.index');
     }
 
@@ -61,7 +64,7 @@ class UsersControllers extends Controller
     public function edit($id)
     {
 	    $user = User::findOrFail($id);
-	    return view('user/edit', ['user'=>$user]);
+	    return view('user/edit', ['user'=>$user, 'password'=>bcrypt($user->password)]);
     }
 
     /**
@@ -71,10 +74,10 @@ class UsersControllers extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
 	    $user = User::findOrFail($id);
-	    $user->update($request->except('_token'));
+	    $user->update($request);
 	    return redirect()->route('user.index');
     }
 

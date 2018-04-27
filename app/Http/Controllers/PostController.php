@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use App\Post;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,7 +37,7 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
 	    $user = Auth::id();
 	    $post = Post::create($request->except('_token')+ ['user_id'=>$user]);
@@ -55,6 +57,15 @@ class PostController extends Controller
 	    $user = $post->user;
 	
 	    return view('post/show', ['post'=>$post, 'user'=>$user]);
+    }
+    
+    public function userPosts($id)
+    {
+	    $posts = new Post();
+	    $posts = $posts->where('user_id',$id)->get();
+	    $user = User::findOrFail($id);
+	
+	    return view('post/user_posts', ['posts'=>$posts, 'user'=>$user]);
     }
 
     /**
@@ -76,10 +87,11 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StorePostRequest $request, $id)
     {
-	    $user = Auth::id();
+//	    $user = Auth::id();
 	    $post = Post::findOrFail($id);
+	    $user = $post->user;
 	    $post = $post->update($request->except('_token')+ ['user_id'=>$user]);
 	    return redirect()->route('post.show', $id);
     }

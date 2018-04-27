@@ -6,7 +6,7 @@
 		<p>{{$post->text}}</p>
 		<br>
 		<b>Creatad: {{$post->created_at}}</b>
-		<p>{{$user->name}}</p>
+		<a href="{{route('user.posts', $user->id)}}">{{$user->name}}</a>
 		<br>
 		@if($post->user_id == \Illuminate\Support\Facades\Auth::id())
 			<a href="{{route('post.edit', $post->id)}}" role="button" class="btn btn-secondary">Edit</a>
